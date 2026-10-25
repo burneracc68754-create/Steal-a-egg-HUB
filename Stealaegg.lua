@@ -2,31 +2,32 @@
     Steal a egg HUB - Key System GUI
     made by 𝚛𝚢𝚣𝚎
 ]]
- 
+
 -- ============================================================
 --  CONFIG (edit these)
 -- ============================================================
 local Config = {
     HubName   = "Steal a egg HUB",
     Author    = "made by 𝚛𝚢𝚣𝚎",
- 
+
     -- Paste your key link between the quotes. You can change it any time.
     KeyLink   = "https://www.roblox.je/communities/457642417669/Scrpter-Society",
- 
+
     -- Option 1: static keys (leave empty {} if you only use a web check)
     Keys      = { "ASDWAVVVVBEASDDFFFFFFXXXXZDASSS" },
- 
+
     -- Option 2: web check. Put a link to a raw text file / API that returns the valid key.
     -- Leave as "" to disable.
     KeyCheckURL = "",
- 
-    -- Called after a correct key is entered. Put your main hub script here.
+
+    -- Called after a correct key is entered.
+    -- IMPORTANT: this must be your MAIN hub file, NOT the file this key GUI is saved in,
+    -- otherwise it will load the key GUI again in a loop.
     OnSuccess = function()
-        -- loadstring(game:HttpGet("PASTE_YOUR_MAIN_SCRIPT_LINK_HERE"))()
-        print("Key accepted - load your hub here!")
+        loadstring(game:HttpGet("https://raw.githubusercontent.com/burneracc68754-create/Steal-a-egg-HUB/refs/heads/main/Main.lua"))()
     end,
 }
- 
+
 -- ============================================================
 --  SERVICES
 -- ============================================================
@@ -34,9 +35,9 @@ local Players          = game:GetService("Players")
 local TweenService     = game:GetService("TweenService")
 local UserInputService = game:GetService("UserInputService")
 local CoreGui          = game:GetService("CoreGui")
- 
+
 local LocalPlayer = Players.LocalPlayer
- 
+
 -- ============================================================
 --  THEME
 -- ============================================================
@@ -52,7 +53,7 @@ local Theme = {
     Success    = Color3.fromRGB(90, 220, 130),
     Error      = Color3.fromRGB(255, 90, 100),
 }
- 
+
 -- ============================================================
 --  HELPERS
 -- ============================================================
@@ -68,7 +69,7 @@ local function safeParent(gui)
         gui.Parent = LocalPlayer:WaitForChild("PlayerGui")
     end
 end
- 
+
 local function create(class, props, children)
     local inst = Instance.new(class)
     for k, v in pairs(props or {}) do
@@ -79,7 +80,7 @@ local function create(class, props, children)
     end
     return inst
 end
- 
+
 local function corner(r) return create("UICorner", { CornerRadius = UDim.new(0, r) }) end
 local function stroke(color, thickness, transparency)
     return create("UIStroke", {
@@ -89,13 +90,13 @@ local function stroke(color, thickness, transparency)
         ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
     })
 end
- 
+
 local function tween(obj, info, goal)
     local t = TweenService:Create(obj, TweenInfo.new(unpack(info)), goal)
     t:Play()
     return t
 end
- 
+
 local function copyToClipboard(text)
     local fn = setclipboard or toclipboard or (syn and syn.write_clipboard) or (Clipboard and Clipboard.set)
     if fn then
@@ -104,7 +105,7 @@ local function copyToClipboard(text)
     end
     return false
 end
- 
+
 -- Remove any previous copy of the GUI
 for _, parent in ipairs({ CoreGui, LocalPlayer:FindFirstChild("PlayerGui") }) do
     if parent then
@@ -118,7 +119,7 @@ pcall(function()
         if old then old:Destroy() end
     end
 end)
- 
+
 -- ============================================================
 --  BUILD GUI
 -- ============================================================
@@ -129,7 +130,7 @@ local ScreenGui = create("ScreenGui", {
     IgnoreGuiInset = true,
 })
 safeParent(ScreenGui)
- 
+
 -- Main window
 local Main = create("Frame", {
     Name = "Main",
@@ -141,7 +142,7 @@ local Main = create("Frame", {
     ClipsDescendants = true,
     Parent = ScreenGui,
 }, { corner(14), stroke(Theme.Accent, 1.5, 0.35) })
- 
+
 -- Soft gradient on the background
 create("UIGradient", {
     Color = ColorSequence.new({
@@ -151,7 +152,7 @@ create("UIGradient", {
     Rotation = 90,
     Parent = Main,
 })
- 
+
 -- Top accent bar
 local TopBar = create("Frame", {
     Name = "TopBar",
@@ -164,7 +165,7 @@ local TopBar = create("Frame", {
         Color = ColorSequence.new(Theme.Accent, Theme.AccentDark),
     }),
 })
- 
+
 -- Drag handle area (title region)
 local Header = create("Frame", {
     Name = "Header",
@@ -173,7 +174,7 @@ local Header = create("Frame", {
     BackgroundTransparency = 1,
     Parent = Main,
 })
- 
+
 local Icon = create("TextLabel", {
     Name = "Icon",
     Size = UDim2.fromOffset(44, 44),
@@ -185,7 +186,7 @@ local Icon = create("TextLabel", {
     TextColor3 = Theme.Text,
     Parent = Header,
 }, { corner(12), stroke(Theme.Accent, 1, 0.5) })
- 
+
 local Title = create("TextLabel", {
     Name = "Title",
     Size = UDim2.new(1, -150, 0, 26),
@@ -198,7 +199,7 @@ local Title = create("TextLabel", {
     TextXAlignment = Enum.TextXAlignment.Left,
     Parent = Header,
 })
- 
+
 local Author = create("TextLabel", {
     Name = "Author",
     Size = UDim2.new(1, -150, 0, 18),
@@ -211,7 +212,7 @@ local Author = create("TextLabel", {
     TextXAlignment = Enum.TextXAlignment.Left,
     Parent = Header,
 })
- 
+
 -- Close button
 local Close = create("TextButton", {
     Name = "Close",
@@ -225,7 +226,7 @@ local Close = create("TextButton", {
     AutoButtonColor = false,
     Parent = Header,
 }, { corner(8) })
- 
+
 -- Divider
 create("Frame", {
     Name = "Divider",
@@ -236,7 +237,7 @@ create("Frame", {
     BorderSizePixel = 0,
     Parent = Main,
 })
- 
+
 -- Body label
 create("TextLabel", {
     Name = "Hint",
@@ -250,7 +251,7 @@ create("TextLabel", {
     TextXAlignment = Enum.TextXAlignment.Left,
     Parent = Main,
 })
- 
+
 -- Key input
 local KeyBox = create("TextBox", {
     Name = "KeyBox",
@@ -272,7 +273,7 @@ local KeyBox = create("TextBox", {
 })
 local KeyStroke = stroke(Theme.Secondary, 1.5, 0)
 KeyStroke.Parent = KeyBox
- 
+
 -- Buttons row (left = Check Key, right = Copy Link)
 local ButtonRow = create("Frame", {
     Name = "ButtonRow",
@@ -281,7 +282,7 @@ local ButtonRow = create("Frame", {
     BackgroundTransparency = 1,
     Parent = Main,
 })
- 
+
 local CheckBtn = create("TextButton", {
     Name = "CheckKey",
     Size = UDim2.new(0.5, -6, 1, 0),
@@ -297,7 +298,7 @@ local CheckBtn = create("TextButton", {
     corner(10),
     create("UIGradient", { Color = ColorSequence.new(Theme.Accent, Theme.AccentDark), Rotation = 90 }),
 })
- 
+
 local CopyBtn = create("TextButton", {
     Name = "CopyLink",
     Size = UDim2.new(0.5, -6, 1, 0),
@@ -310,7 +311,7 @@ local CopyBtn = create("TextButton", {
     AutoButtonColor = false,
     Parent = ButtonRow,
 }, { corner(10), stroke(Theme.Accent, 1, 0.6) })
- 
+
 -- Status label
 local Status = create("TextLabel", {
     Name = "Status",
@@ -323,18 +324,18 @@ local Status = create("TextLabel", {
     TextColor3 = Theme.SubText,
     Parent = Main,
 })
- 
+
 -- ============================================================
 --  BEHAVIOUR
 -- ============================================================
 local WINDOW_SIZE = UDim2.fromOffset(420, 284)
 local busy = false
- 
+
 local function setStatus(text, color)
     Status.Text = text
     Status.TextColor3 = color or Theme.SubText
 end
- 
+
 local function shake()
     local origin = Main.Position
     for _, offset in ipairs({ 8, -8, 5, -5, 0 }) do
@@ -342,7 +343,7 @@ local function shake()
         task.wait(0.04)
     end
 end
- 
+
 -- Hover effects
 local function addHover(button, normal, hover, textNormal, textHover)
     button.MouseEnter:Connect(function()
@@ -354,30 +355,27 @@ local function addHover(button, normal, hover, textNormal, textHover)
         if textNormal then tween(button, { 0.15 }, { TextColor3 = textNormal }) end
     end)
 end
- 
+
 addHover(CheckBtn, Theme.Accent, Color3.fromRGB(255, 195, 100))
 addHover(CopyBtn, Theme.Secondary, Color3.fromRGB(70, 70, 100))
 addHover(Close, Theme.Panel, Theme.Error, Theme.SubText, Theme.Text)
- 
+
 -- Input focus highlight
 KeyBox.Focused:Connect(function()
     tween(KeyStroke, { 0.15 }, { Color = Theme.Accent })
 end)
-KeyBox.FocusLost:Connect(function()
-    tween(KeyStroke, { 0.15 }, { Color = Theme.Secondary })
-end)
- 
+
 -- Key validation
 local function trim(s) return (s:gsub("^%s+", ""):gsub("%s+$", "")) end
- 
+
 local function validateKey(input)
     input = trim(input)
     if input == "" then return false, "Please enter a key." end
- 
+
     for _, k in ipairs(Config.Keys) do
         if input == k then return true end
     end
- 
+
     if Config.KeyCheckURL ~= "" then
         local ok, result = pcall(function()
             return game:HttpGet(Config.KeyCheckURL)
@@ -389,10 +387,10 @@ local function validateKey(input)
             return true
         end
     end
- 
+
     return false, "Invalid key. Try again."
 end
- 
+
 local function closeGui()
     local t = tween(Main, { 0.3, Enum.EasingStyle.Back, Enum.EasingDirection.In }, {
         Size = UDim2.fromOffset(0, 0),
@@ -400,17 +398,17 @@ local function closeGui()
     t.Completed:Wait()
     ScreenGui:Destroy()
 end
- 
-CheckBtn.MouseButton1Click:Connect(function()
+
+local function runCheck()
     if busy then return end
     busy = true
- 
+
     setStatus("Checking key...", Theme.Accent)
     CheckBtn.Text = "Checking..."
     task.wait(0.4)
- 
+
     local ok, err = validateKey(KeyBox.Text)
- 
+
     if ok then
         setStatus("Key accepted! Loading hub...", Theme.Success)
         CheckBtn.Text = "Success ✓"
@@ -420,7 +418,7 @@ CheckBtn.MouseButton1Click:Connect(function()
         task.spawn(Config.OnSuccess)
         return
     end
- 
+
     setStatus(err, Theme.Error)
     CheckBtn.Text = "Check Key"
     tween(KeyStroke, { 0.2 }, { Color = Theme.Error })
@@ -428,8 +426,10 @@ CheckBtn.MouseButton1Click:Connect(function()
     task.wait(0.8)
     tween(KeyStroke, { 0.3 }, { Color = Theme.Secondary })
     busy = false
-end)
- 
+end
+
+CheckBtn.MouseButton1Click:Connect(runCheck)
+
 CopyBtn.MouseButton1Click:Connect(function()
     if copyToClipboard(Config.KeyLink) then
         setStatus("Link copied to clipboard!", Theme.Success)
@@ -441,15 +441,16 @@ CopyBtn.MouseButton1Click:Connect(function()
     task.wait(1.5)
     CopyBtn.Text = "Copy Link"
 end)
- 
+
 KeyBox.FocusLost:Connect(function(enterPressed)
+    tween(KeyStroke, { 0.15 }, { Color = Theme.Secondary })
     if enterPressed then
-        CheckBtn.MouseButton1Click:Fire()
+        runCheck()
     end
 end)
- 
+
 Close.MouseButton1Click:Connect(closeGui)
- 
+
 -- Dragging
 do
     local dragging, dragStart, startPos
@@ -477,3 +478,6 @@ do
         end
     end)
 end
+
+-- Open animation (this is what makes the window appear)
+tween(Main, { 0.45, Enum.EasingStyle.Back, Enum.EasingDirection.Out }, { Size = WINDOW_SIZE })
