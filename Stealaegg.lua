@@ -244,7 +244,7 @@ create("TextLabel", {
     Size = UDim2.new(1, -44, 0, 18),
     Position = UDim2.fromOffset(22, 102),
     BackgroundTransparency = 1,
-    Text = "Enter your key to unlock the hub",
+    Text = "Join the group for the key, then paste it below",
     Font = Enum.Font.GothamMedium,
     TextSize = 13,
     TextColor3 = Theme.SubText,
